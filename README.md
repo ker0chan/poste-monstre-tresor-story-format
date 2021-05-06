@@ -19,5 +19,5 @@ An example story is included in the `demo` folder, and should look like this:
 ## References
 
 This format was created by using this guide: https://videlais.com/2020/02/28/creating-your-own-twine-2-story-format-part-1-understanding-twine-2-html-structures/
-
+This repository structure and build scripts were copied from: https://github.com/videlais/example-story-format
 
