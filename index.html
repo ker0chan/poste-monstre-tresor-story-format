@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta charset="utf-8">
+		<title>{{STORY_NAME}}</title>
+	</head>
+	<body>
+        <h1>{{STORY_NAME}}</h1>
+		{{STORY_DATA}}
+		<script>            
+            //HTML passagedata element to JSON object
+            parsePassage = function(p) {
+                const pid = parseInt(p.getAttribute("pid"), 10);
+                const name = p.getAttribute("name");
+                const text = p.innerText;
+
+                let links = text.match(/\[\[[^\[\]]+\]\]/g) || [];
+                links = links.map(rawLink => {
+                    let split = rawLink
+                    .replace("[[", "")
+                    .replace("]]", "")
+                    .split("|");
+
+                    return {
+                        "rawText" : rawLink,                        
+                        "text" : split[0],
+                        "destination" : split[1] || split[0]
+                    }
+                });
+
+                return { pid, name, text, links };
+            }
+
+            //JSON object to formatted text
+            renderPassage = function(p) {
+                //Number followed by text
+                let rendered = "<b>￭"+p.number+": </b>"+p.text;
+                //Remove newlines
+                rendered = rendered.replace(/\n/g, " ");
+                //Consolidate the links
+                p.links.forEach( link => {
+                    let destPassage = passages.find(pp => pp.name == link.destination);
+                    if(link.text == link.destination)
+                    {
+                        //[[some passage name]] becomes "N"
+                        rendered = rendered.replace(link.rawText, destPassage.number);
+                    } else 
+                    {
+                        //[[go to|some passage name]] becomes "go to N"
+                        rendered = rendered.replace(link.rawText, "<b>"+link.text.trim()+" "+destPassage.number+"</b>");
+                    }                    
+                })
+                //Remove trailing spaces
+                return rendered.trim(); 
+            }
+
+            let passages = [...document.querySelectorAll('tw-passagedata')];
+            //Parse the passages
+            passages = passages.map( p => parsePassage(p) );
+            //Sort them alphabetically according to their title
+            // (Use numbers at the beginning of passage titles to give the story a general structure)
+            passages.sort(function(a, b){
+                if(a.name < b.name) { return -1; }
+                if(a.name > b.name) { return 1; }
+                return 0;
+            })
+            //Assign a readable number to the passages, starting from 1
+            // we could use their passage id, but they're not guaranteed to be clean and sequential (idk how Twine manages them and I don't want to know)
+            passages.forEach( (p,i,arr) => arr[i].number = (i+1));
+            //Render the passages and join them into a single chunk of text
+            let rendered = passages
+            .map(p => renderPassage(p))
+            .join("       "); //bunch of non-breakable spaces as separator
+
+            let result = document.createElement("div");
+            result.innerHTML = rendered;
+            document.body.appendChild(result);
+		</script>
+	</body>
+</html>
