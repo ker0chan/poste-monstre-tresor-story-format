@@ -11,6 +11,11 @@ This is a custom Twine 2 format that renders a story as a printable, linear bloc
 In Twine 2, click on Story Formats. Go to the 'Add a New Format' tab. Copy and paste the following URL and then click '+Add':
 `https://raw.githubusercontent.com/ker0chan/poste-monstre-tresor-story-format/main/dist/format.js`
 
+## Example
+
+An example story is included in the `demo` folder, and should look like this:
+![screenshot of the rendered example story](./demo/postcard.png)
+
 ## References
 
 This format was created by using this guide: https://videlais.com/2020/02/28/creating-your-own-twine-2-story-format-part-1-understanding-twine-2-html-structures/
